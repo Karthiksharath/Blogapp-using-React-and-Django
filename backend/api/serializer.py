@@ -29,17 +29,17 @@ class UserToken(TokenObtainPairSerializer):
   
 class RegisterSeializer(serializers.ModelSerializer):
 
-  password_1 = serializers.CharField(write_only=True, required=True, validators = [validate_password])
-  password_2 = serializers.CharField(write_only=True, required=True)
+  password = serializers.CharField(write_only=True, required=True, validators = [validate_password])
+  password2 = serializers.CharField(write_only=True, required=True)
 
   class Meta:
 
     model = api_models.User
-    fields = ['full_name', 'email', 'password_1', 'password_2']
+    fields = ['full_name', 'email', 'password', 'password2']
 
   def validate(self, attrs):
 
-    if attrs['password_1'] != attrs['password_2']:
+    if attrs['password'] != attrs['password2']:
       raise serializers.ValidationError({"password fields didn't match"})
     
     return attrs
@@ -54,7 +54,7 @@ class RegisterSeializer(serializers.ModelSerializer):
 
         email_username, rest = user.email.split('@')
         user.username = email_username
-        user.set_password(validated_data['password_1'])
+        user.set_password(validated_data['password'])
         user.save()
 
         return user
